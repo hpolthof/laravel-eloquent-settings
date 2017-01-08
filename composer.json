@@ -1,0 +1,27 @@
+{
+  "name": "hpolthof/laravel-eloquent-settings",
+  "description": "Allow for dynamic blobbed settings in Eloquent models.",
+  "license": "GPL2",
+  "keywords": ["laravel", "Eloquent", "database"],
+  "authors": [
+    {
+      "name": "Paul Olthof",
+      "email": "hpolthof@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.4.0",
+    "laravel/laravel": ">=5.1.*"
+  },
+
+  "autoload": {
+    "psr-4": {
+      "Hpolthof\\LaravelEloquentSettings\\": "src"
+    }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "0.1.x-dev"
+    }
+  }
+}
