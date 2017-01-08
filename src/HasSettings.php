@@ -83,6 +83,7 @@ trait HasSettings
      * @return bool
      */
     public function hasSetting($name) {
+        $this->populateSettingsArray();
         return array_key_exists($name, $this->__settingsWithDefaults);
     }
 
