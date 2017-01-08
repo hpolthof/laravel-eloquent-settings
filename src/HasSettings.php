@@ -11,11 +11,11 @@ trait HasSettings
     public function __call($method, $parameters)
     {
         if($method == 'get'.Str::studly($this->getSettingsFieldName()).'Attribute') {
-            return call_user_func([$this, '__getSettingsAttribute'], $parameters);
+            return call_user_func([$this, '__getSettingsAttribute'], $parameters[0]);
         }
 
         if($method == 'set'.Str::studly($this->getSettingsFieldName()).'Attribute') {
-            return call_user_func([$this, '__setSettingsAttribute'], $parameters);
+            return call_user_func([$this, '__setSettingsAttribute'], $parameters[0]);
         }
 
         return parent::__call($method, $parameters);
@@ -43,8 +43,6 @@ trait HasSettings
             if(strlen($value) > 0) {
                 $this->__attributes = json_decode($value, true);
             }
-
-            $this->populateSettingsArray();
         }
         return $this->__attributes;
     }
@@ -92,6 +90,7 @@ trait HasSettings
      */
     public function getSettingsCollection()
     {
+        $this->populateSettingsArray();
         return new Collection($this->__settingsWithDefaults);
     }
 
