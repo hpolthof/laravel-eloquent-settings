@@ -5,17 +5,15 @@ use Illuminate\Support\Collection;
 trait HasSettings
 {
     protected $__attributes = null;
-    protected $settingsField = 'settings';
-    protected $defaultSettings = [];
     protected $__settingsWithDefaults = null;
 
     public function __call($method, $parameters)
     {
-        if($method == 'get'.Str::studly($this->settingsField).'Attribute') {
+        if($method == 'get'.Str::studly($this->getSettingsFieldName()).'Attribute') {
             return call_user_func([$this, '__getSettingsAttribute'], $parameters);
         }
 
-        if($method == 'set'.Str::studly($this->settingsField).'Attribute') {
+        if($method == 'set'.Str::studly($this->getSettingsFieldName()).'Attribute') {
             return call_user_func([$this, '__setSettingsAttribute'], $parameters);
         }
 
@@ -24,7 +22,7 @@ trait HasSettings
 
     public function hasGetMutator($key)
     {
-        if($key === $this->settingsField) {
+        if($key === $this->getSettingsFieldName()) {
             return true;
         }
         return parent::hasGetMutator($key);
@@ -32,7 +30,7 @@ trait HasSettings
 
     public function hasSetMutator($key)
     {
-        if($key === $this->settingsField) {
+        if($key === $this->getSettingsFieldName()) {
             return true;
         }
         return parent::hasSetMutator($key);
@@ -51,7 +49,7 @@ trait HasSettings
     }
 
     private function __setSettingsAttribute($value) {
-        $this->attributes[$this->settingsField] = json_encode($value);
+        $this->attributes[$this->getSettingsFieldName()] = json_encode($value);
     }
 
     /**
@@ -74,7 +72,7 @@ trait HasSettings
     public function setSetting($name, $value) {
         $this->hasSetting($name);
         $this->__attributes[$name] = $value;
-        $this->{$this->settingsField} = $this->__attributes;
+        $this->{$this->getSettingsFieldName()} = $this->__attributes;
         $this->populateSettingsArray();
         return $this;
     }
@@ -100,8 +98,8 @@ trait HasSettings
      */
     protected function mergeDefaultSettings()
     {
-        $flatSettings = array_dot($this->{$this->settingsField});
-        $flatDefaults = array_dot($this->defaultSettings);
+        $flatSettings = array_dot($this->{$this->getSettingsFieldName()});
+        $flatDefaults = array_dot($this->getDefaultSettingsArray());
 
         foreach($flatDefaults as $k => $v) {
             $flatSettings[$k] = $v;
@@ -119,10 +117,10 @@ trait HasSettings
      */
     protected function getSettingsArray()
     {
-        if(count($this->defaultSettings) > 0) {
+        if(count($this->getDefaultSettingsArray()) > 0) {
             return $this->mergeDefaultSettings();
         }
-        return $this->{$this->settingsField};
+        return $this->{$this->getSettingsFieldName()};
     }
 
     /**
@@ -132,5 +130,21 @@ trait HasSettings
     {
         $this->__settingsWithDefaults = $this->getSettingsArray();
         return $this;
+    }
+
+    private function getSettingsFieldName()
+    {
+        if(property_exists($this, 'settingsField')) {
+            return $this->settingsField;
+        }
+        return 'settings';
+    }
+
+    private function getDefaultSettingsArray()
+    {
+        if(property_exists($this, 'defaultSettings')) {
+            return $this->defaultSettings;
+        }
+        return [];
     }
 }
